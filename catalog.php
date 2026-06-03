@@ -1,10 +1,24 @@
 <?php
+require_once 'config/koneksi.php';
 session_start();    
 include 'header.php';
+
+// ambil query semua data produk
+$kategori_terpilih = isset($_GET['kategori']) ? mysqli_real_escape_string($conn, $_GET['kategori']) : 'Semua Produk';
+
+$query = "SELECT tabel_produk.*, tabel_kategori.nama_kategori 
+          FROM tabel_produk 
+          LEFT JOIN tabel_kategori ON tabel_produk.id_kategori = tabel_kategori.id_kategori";
+
+if ($kategori_terpilih !== 'Semua Produk') {
+    $query .= " WHERE tabel_kategori.nama_kategori = '$kategori_terpilih'";
+    }
+$result = mysqli_query($conn, $query);
 ?>
 
 <body class="bg-[#F6F1EB] font-sans">
 
+    <header>
     <nav
         class="sticky top-0 z-50 bg-[#8C5A3C] shadow-md shadow-black/50 text-white px-6 py-3 flex items-center justify-between">
         <div class="flex items-center space-x-3">
@@ -29,6 +43,7 @@ include 'header.php';
             <span class="text-base">👤</span>
         </div>
     </nav>
+    </header>
 
     <section class="relative w-full shadow-md shadow-black/50 min-h-[500px] bg-[#3D251E] overflow-visible">
         <div class="absolute top-0 right-0 w-2/3 h-full pointer-events-none">
@@ -69,86 +84,124 @@ include 'header.php';
 
         <div class="grid grid-cols-3 items-center mb-12 relative w-full">
 
-            <div class="justify-self-start relative inline-block text-left">
-                <button id="dropdownBtn"
-                    class="border-2 border-[#8C5A3C] rounded-2xl px-6 py-2.5 bg-transparent text-sm font-medium text-[#4B2F2B] flex items-center justify-between gap-4 min-w-[180px] shadow-sm hover:bg-[#FFF8F0] transition-all duration-200 focus:outline-none">
-                    <span id="selectedLabel">Semua Produk</span>
-                    <svg class="w-4 h-4 text-[#8C5A3C] transition-transform duration-200" id="dropdownArrow" fill="none"
-                        stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                </button>
+            <!-- Tombol Dropdown Utama -->
+    <button id="dropdownBtn"
+        class="border-2 border-[#8C5A3C] rounded-2xl px-6 py-2.5 bg-transparent text-sm font-medium text-[#4B2F2B] flex items-center justify-between gap-4 min-w-[180px] shadow-sm hover:bg-[#FFF8F0] transition-all duration-200 focus:outline-none">
+        <!-- Diubah menjadi dinamis agar teks tombolnya ikut berubah saat diklik -->
+        <span id="selectedLabel"><?php echo htmlspecialchars($kategori_terpilih); ?></span>
+        <svg class="w-4 h-4 text-[#8C5A3C] transition-transform duration-200" id="dropdownArrow" fill="none"
+            stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+        </svg>
+    </button>
 
-                <div id="dropdownMenu"
-                    class="hidden absolute left-0 mt-3 w-64 bg-[#FFF8F0] rounded-3xl shadow-xl border border-[#E5D3C0] p-5 z-50 transition-all duration-200">
-                    <h4 class="text-base font-bold text-[#4B2F2B] font-petrona tracking-wide">Menu Pilihan</h4>
-                    <p class="text-xs italic text-gray-400 mb-3">Kategori</p>
+    <div id="dropdownMenu"
+        class="hidden absolute left-0 mt-3 w-64 bg-[#FFF8F0] rounded-3xl shadow-xl border border-[#E5D3C0] p-5 z-50 transition-all duration-200">
+        <h4 class="text-base font-bold text-[#4B2F2B] font-petrona tracking-wide">Menu Pilihan</h4>
+        <p class="text-xs italic text-gray-400 mb-3">Kategori</p>
 
-                    <ul class="space-y-1">
-                        <li class="dropdown-item flex items-center justify-between bg-[#FFF8F0] text-[#4B2F2B] font-semibold px-4 py-2.5 rounded-xl cursor-pointer text-sm transition-all"
-                            data-value="Semua Produk">
-                            <span>Semua Produk</span>
-                            <span class="checkmark text-xs font-bold text-[#8C5A3C]">✓</span>
-                        </li>
-                        <li class="dropdown-item flex items-center justify-between text-gray-600 hover:bg-[#FFF8F0] hover:text-[#4B2F2B] px-4 py-2.5 rounded-xl cursor-pointer text-sm transition-all"
-                            data-value="Cake">
-                            <span>Cake</span>
-                            <span class="checkmark text-xs font-bold text-[#8C5A3C] hidden">✓</span>
-                        </li>
-                        <li class="dropdown-item flex items-center justify-between text-gray-600 hover:bg-[#FFF8F0] hover:text-[#4B2F2B] px-4 py-2.5 rounded-xl cursor-pointer text-sm transition-all"
-                            data-value="Pastry">
-                            <span>Pastry</span>
-                            <span class="checkmark text-xs font-bold text-[#8C5A3C] hidden">✓</span>
-                        </li>
-                        <li class="dropdown-item flex items-center justify-between text-gray-600 hover:bg-[#FFF8F0] hover:text-[#4B2F2B] px-4 py-2.5 rounded-xl cursor-pointer text-sm transition-all"
-                            data-value="Dessert">
-                            <span>Dessert</span>
-                            <span class="checkmark text-xs font-bold text-[#8C5A3C] hidden">✓</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+        <ul class="space-y-1">
 
+            <!-- Semua Produk -->
+            <li class="dropdown-item flex items-center justify-between bg-[#FFF8F0] text-[#4B2F2B] font-semibold px-4 py-2.5 rounded-xl cursor-pointer text-sm transition-all hover:opacity-90"
+                data-value="Semua Produk">
+                <a href="catalog.php?kategori=Semua+Produk" class="flex items-center justify-between w-full">
+                    <span>Semua Produk</span>
+                    <?php if ($kategori_terpilih == 'Semua Produk') : ?>
+                        <span class="checkmark text-xs font-bold text-[#8C5A3C]">✓</span>
+                    <?php endif; ?>
+                </a>
+            </li>
+
+            <!-- Croissant dan Danish (Menggunakan %20 agar dibaca spasi oleh MySQL) -->
+            <li class="dropdown-item flex items-center justify-between bg-[#FFF8F0] text-[#4B2F2B] font-semibold px-4 py-2.5 rounded-xl cursor-pointer text-sm transition-all hover:opacity-90"
+                data-value="Croissant dan Danish">
+                <a href="catalog.php?kategori=Croissant%20dan%20Danish" class="flex items-center justify-between w-full">
+                    <span>Croissant dan Danish</span>
+                    <?php if ($kategori_terpilih == 'Croissant dan Danish') : ?>
+                        <span class="checkmark text-xs font-bold text-[#8C5A3C]">✓</span>
+                    <?php endif; ?>
+                </a>
+            </li>
+
+            <!-- Cakes -->
+            <li class="dropdown-item flex items-center justify-between bg-[#FFF8F0] text-[#4B2F2B] font-semibold px-4 py-2.5 rounded-xl cursor-pointer text-sm transition-all hover:opacity-90"
+                data-value="Cakes">
+                <a href="catalog.php?kategori=Cakes" class="flex items-center justify-between w-full">
+                    <span>Cakes</span>
+                    <?php if ($kategori_terpilih == 'Cakes') : ?>
+                        <span class="checkmark text-xs font-bold text-[#8C5A3C]">✓</span>
+                    <?php endif; ?>
+                </a>
+            </li>
+
+            <!-- Soft Cookies (Menggunakan %20 agar aman) -->
+            <li class="dropdown-item flex items-center justify-between bg-[#FFF8F0] text-[#4B2F2B] font-semibold px-4 py-2.5 rounded-xl cursor-pointer text-sm transition-all hover:opacity-90"
+                data-value="Soft Cookies">
+                <a href="catalog.php?kategori=Soft%20Cookies" class="flex items-center justify-between w-full">
+                    <span>Soft Cookies</span>
+                    <?php if ($kategori_terpilih == 'Soft Cookies') : ?>
+                        <span class="checkmark text-xs font-bold text-[#8C5A3C]">✓</span>
+                    <?php endif; ?>
+                </a>
+            </li>
+
+        </ul>
+    </div>
             <div class="text-center">
                 <h2 class="text-3xl md:text-4xl text-[#4B2F2B] font-petrona font-bold tracking-wide drop-shadow-[0_2px_3px_rgba(0,0,0,0.30)]">
-                    Jowo Borot
+                    Produk Kami
                 </h2>
             </div>
 
             <div></div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <script>
-                for (let i = 0; i < 15; i++) {
-                    document.write(`
-                        <div class="bg-white rounded-[32px] shadow-md border border-gray-100 overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-xl flex flex-col">
-                            
-                            <div class="relative w-full h-52 rounded-[24px] overflow-hidden">
-                                <img src="https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=800" class="w-full h-full object-cover">
-                                
-                                <div class="absolute inset-0 bg-gradient-to-t from-white via-white/20 to-transparent to-[50%]"></div>
-                            </div>
-                            
-                            <div class="px-4 pt-2 pb-4 flex-1 flex flex-col justify-between">
-                                <div>
-                                    <div class="flex justify-between items-baseline mb-1">
-                                        <h3 class="font-bold font-petrona text-2xl text-[#4B2F2B]">Pastry Lorem</h3>
-                                        <span class="text-xs text-gray-400 italic">Stok: 1</span>
-                                    </div>
-                                    <p class="text-base font-semibold text-[#8C5A3C] mb-1">Rp. 25.000</p>
-                                    <p class="text-xs text-gray-500 leading-relaxed mb-4">Classic Pastry</p>
-                                </div>
-                                
-                                <button class="w-full bg-[#8C5A3C] drop-shadow-[0_2px_3px_rgba(0,0,0,0.25)] text-white rounded-full py-2.5 text-sm font-bold shadow-md hover:bg-[#69433F] active:scale-95 transition-all duration-200">
-                                    Detail
-                                </button>
-                            </div>
+<!-- looping produk -->
+ <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            
+            <?php 
+            // 3. Looping data dari database menggunakan while loop
+            if (mysqli_num_rows($result) > 0) {
+                while($row = mysqli_fetch_assoc($result)) { 
+            ?>
+                <div class="bg-white rounded-[32px] shadow-md border border-gray-100 overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-xl flex flex-col">
+                    
+                    <div class="relative w-full h-52 rounded-[24px] overflow-hidden">
+                        <img src="assets/product/<?php echo $row['foto_produk']; ?>" alt="<?php echo $row['nama_produk']; ?>" class="w-full h-full object-cover">
+                        
+                        <span class="absolute top-3 right-3 text-xs font-semibold px-3 py-1 rounded-full <?php echo $row['status_po'] == 'Ready' ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'; ?>">
+                            <?php echo $row['status_po']; ?>
+                        </span>
+                    </div>
 
+                    <div class="px-4 pt-2 pb-4 flex-1 flex flex-col justify-between">
+                        <div class="flex justify-between items-baseline mb-1">
+                            <span class="text-xs uppercase font-semibold text-pastry-caramel tracking-wider">
+                                <?php echo $row['nama_kategori']; ?>
+                            </span>
+                            <span class="text-xs text-gray-400 italic">Stok: <?php echo $row['stok']; ?></span>
                         </div>
-                    `);
+                        <h3 class="font-serif font-bold text-xl mt-1 mb-2 text-pastry-dark">
+                            <?php echo $row['nama_produk']; ?>
+                        </h3>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="text-base font-semibold text-[#8C5A3C] mb-1">
+                                Rp <?php echo number_format($row['harga'], 0, ',', '.'); ?>
+                            </span>
+                        </div>
+                        <button class="w-full bg-[#8C5A3C] drop-shadow-[0_2px_3px_rgba(0,0,0,0.25)] text-white rounded-full py-2.5 text-sm font-bold shadow-md hover:bg-[#69433F] active:scale-95 transition-all duration-200">
+                                    Detail
+                        </button>
+                    </div>
+                </div>
+            <?php 
                 }
-            </script>
+            } else {
+                echo "<p class='col-span-3 text-center text-pastry-dark/50 italic'>Belum ada data kue di etalase.</p>";
+            } 
+            ?>
+
         </div>
     </section>
 
@@ -164,6 +217,7 @@ include 'header.php';
         });
     </script>
 
+<!-- area login page -->
     <div id="loginModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-black/40 backdrop-blur-md transition-all duration-300">
     
     <div class="bg-[#FFF8F0] w-full max-w-[440px] px-10 py-12 rounded-[51px] shadow-2xl relative text-center">
