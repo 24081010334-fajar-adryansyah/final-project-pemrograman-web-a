@@ -1,37 +1,8 @@
 <?php
 session_start();
+include 'header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="id">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pelan-Pelan Tapi Pastry</title>
-
-    <link rel="icon" type="image/png" href="assets/images/favicon.png">
-
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Petrona:ital,wght@0,100..900;1,100..900&family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        'petrona': ['Petrona', 'petrona'],
-                        'sans': ['Poppins', 'sans-petrona'],
-                    }
-                }
-            }
-        }
-    </script>
 
 <body class="bg-[#F6F1EB] font-sans">
     <nav
@@ -54,8 +25,8 @@ session_start();
                 class="hover:text-[#FFF8F0] pb-1 transition-all duration-200 opacity-80 hover:opacity-100">Manajemen</a>
         </div>
 
-        <div class="w-9 h-9 rounded-full bg-[#FFF8F0] flex items-center justify-center cursor-pointer hover:opacity-90 transition-opacity">
-            <a href="login.php">👤</a>
+        <div onclick="openLoginModal()" class="w-9 h-9 rounded-full bg-[#FFF8F0] flex items-center justify-center cursor-pointer hover:opacity-90 transition-opacity">
+            <span class="text-base">👤</span>
         </div>
     </nav>
 
@@ -80,7 +51,7 @@ session_start();
         <div class="flex justify-center lg:justify-end">
             <div
                 class="relative p-4 bg-[#F4EEDC] rounded-[40px] drop-shadow-xl border border-white/60 backdrop-blur-sm max-w-md md:max-w-lg rotate-[-1deg] transition-all duration-300 ease-in-out hover:rotate-0 hover:scale-[1.03] hover:drop-shadow-2xl">
-                <img src="assets/images/almond-croissant.jpg" alt="Almond Croissant"
+                <img src="assets/product/almond-croissant.jpg" alt="Almond Croissant"
                     class="rounded-[32px] w-full h-auto object-cover shadow-inner">
             </div>
         </div>
@@ -100,7 +71,7 @@ session_start();
             <div
                 class="bg-white/60 rounded-[32px] p-5 shadow-md border border-orange-50/50 flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1.5 hover:shadow-md">
                 <div class="w-full h-52 rounded-[24px] overflow-hidden mb-4">
-                    <img src="assets/images/matcha-cookies.jpg" alt="Matcha Cookies"
+                    <img src="assets/product/matcha-cookies.jpg" alt="Matcha Cookies"
                         class="w-full h-full object-cover">
                 </div>
                 <h3 class="font-petrona italic text-xl font-bold text-[#4B2F2B] mb-2">Matcha Cookies</h3>
@@ -116,7 +87,7 @@ session_start();
             <div
                 class="bg-white/60 rounded-[32px] p-5 shadow-md border border-orange-50/50 flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1.5 hover:shadow-md">
                 <div class="w-full h-52 rounded-[24px] overflow-hidden mb-4">
-                    <img src="assets/images/almond-croissant.jpg" alt="Almond Croissant"
+                    <img src="assets/product/almond-croissant.jpg" alt="Almond Croissant"
                         class="w-full h-full object-cover">
                 </div>
                 <h3 class="font-petrona italic text-xl font-bold text-[#4B2F2B] mb-2">Almond Croissant</h3>
@@ -133,7 +104,7 @@ session_start();
             <div
                 class="bg-white/60 rounded-[32px] p-5 shadow-md border border-orange-50/50 flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1.5 hover:shadow-md">
                 <div class="w-full h-52 rounded-[24px] overflow-hidden mb-4">
-                    <img src="assets/images/strawberry-cheesecake.jpg" alt="Strawberry Cheesecake"
+                    <img src="assets/product/strawberry-cheesecake.jpg" alt="Strawberry Cheesecake"
                         class="w-full h-full object-cover">
                 </div>
                 <h3 class="font-petrona italic text-xl font-bold text-[#4B2F2B] mb-2">Strawberry Cheesecake</h3>
@@ -202,49 +173,99 @@ session_start();
             </div>
         </div>
     </section>
+
+<div id="loginModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-black/40 backdrop-blur-md transition-all duration-300">
+    
+    <div class="bg-[#FFF8F0] w-full max-w-[440px] px-10 py-12 rounded-[51px] shadow-2xl relative text-center">
+        
+        <button onclick="closeLoginModal()" class="absolute top-5 right-6 text-black/60 hover:text-black text-xl font-bold cursor-pointer transition-colors">
+            ✕
+        </button>
+
+        <h2 class="text-[32px] font-bold text-black mb-1 font-petrona italic">Masuk Akun</h2>
+        <p class="text-[15px] font-medium text-black mb-8 opacity-80">Area Admin - Pelan-pelan Tapi Pastry</p>
+        
+        <?php if (isset($_GET['pesan'])): ?>
+            <div class="mb-6 p-3 bg-amber-50 border border-amber-200 text-amber-800 text-sm rounded-xl text-center font-medium">
+                <?php 
+                    if ($_GET['pesan'] == "gagal") {
+                        echo "Username atau password salah!";
+                    } else if ($_GET['pesan'] == "belum_login") {
+                        echo "Akses ditolak! Anda harus login terlebih dahulu.";
+                    } else if ($_GET['pesan'] == "logout") {
+                        echo "Anda berhasil keluar dari sistem.";
+                    }
+                ?>
+            </div>
+        <?php endif; ?>
+
+        <form action="proses_login.php" method="POST">
+            <div class="mb-4 flex flex-col">
+                <input type="text" name="username" id="username"
+                       placeholder="Username" 
+                       required 
+                       class="w-full px-6 py-3.5 text-sm bg-[#C08552] text-white rounded-[25px] border-none outline-none font-medium placeholder-white/80">
+            </div>
+            
+            <div class="mb-5 flex flex-col items-center relative w-full">
+                <input type="password" name="password" 
+                       id="passwordModal" 
+                       placeholder="Kata Sandi" 
+                       required 
+                       class="w-full pl-6 pr-12 py-3.5 text-sm bg-[#C08552] text-white rounded-[25px] border-none outline-none font-medium placeholder-white/80">
+                <i class="fa-regular fa-eye-slash absolute right-5 text-white/80 cursor-pointer text-base top-1/2 -translate-y-1/2" id="togglePasswordModal"></i>
+            </div>
+            
+            <button type="submit" name="login"
+                    class="w-full py-3.5 bg-[#4B2F2B] text-white rounded-[25px] text-base font-bold shadow-sm transition duration-200 hover:bg-[#392421] active:scale-[0.99] cursor-pointer">
+                Masuk
+            </button>
+        </form>
+    </div>
+</div>
+
+
+<script>
+    const loginModal = document.getElementById('loginModal');
+    const passwordModal = document.getElementById('passwordModal');
+    const togglePasswordModal = document.getElementById('togglePasswordModal');
+
+    // Fungsi Menampilkan Modal
+    function openLoginModal() {
+        loginModal.classList.remove('hidden');
+    }
+
+    // Fungsi Menyembunyikan Modal
+    function closeLoginModal() {
+        loginModal.classList.add('hidden');
+    }
+
+    // Tutup modal otomatis jika admin klik di area luar kotak form (di area blur)
+    window.onclick = function(event) {
+        if (event.target == loginModal) {
+            closeLoginModal();
+        }
+    }
+
+    // Fitur Intip Kata Sandi di dalam Modal
+    togglePasswordModal.addEventListener('click', function () {
+        const type = passwordModal.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordModal.setAttribute('type', type);
+        this.classList.toggle('fa-eye');
+        this.classList.toggle('fa-eye-slash');
+    });
+</script>
+
+<?php if (isset($_GET['pesan'])): ?>
+<script>
+    // Jika halaman memuat pesan error login, otomatis langsung munculkan kembali modalnya
+    openLoginModal();
+</script>
+<?php endif; ?>
 </body>
 
-<div class="max-w-7xl mx-auto px-6 py-6">
-        <div class="h-[1px] w-full bg-gradient-to-r from-transparent via-[#4B2F2B]/25 to-transparent"></div>
-    </div>
-
-<footer class="bg-[#4B2E2B]  text-white mt-16">
-    <div class="max-w-7xl mx-auto px-10 py-10 shadow-[-25px_-25px_-25px_25px_#4B2F2B]">
-        <div class="grid md:grid-cols-2 gap-10">
-            <div>
-                <h3 class="font-petrona font-bold text-3xl mb-3"><i>Kunjungi Dapur Kami</i></h3>
-                <p class="text-sm text-gray-300">Datang dan rasakan aroma dari panggangan kue <br> langsung dari
-                    oven
-                    kami setiap hari.</p>
-                <div class="mt-4 text-sm text-gray-300 leading-relaxed">
-                    <b>Alamat</b>: Jl. Rungkut Asri Tengah V No. 22<br>
-                    <b>Email</b>: pelanpelantapipastry@gmail.com<br>
-                    <b>WhatsApp</b>: 0858-4760-5587
-                </div>
-            </div>
-            <div class="md:justify-self-end w-full md:w-[350px]">
-                <h3 class="font-petrona italic font-bold text-3xl text-[#C08552] mb-2 pb-2 border-b border-white/20">
-                    Jam Operasional
-                </h3>
-
-                <div class="space-y-2 mt-3 font-sans text-sm text-gray-300">
-                    <div class="flex justify-between items-center">
-                        <span>Senin-Jum'at</span>
-                        <span class="font-medium">08.00-20.00</span>
-                    </div>
-
-                    <div class="flex justify-between items-center">
-                        <span>Sabtu-Minggu</span>
-                        <span class="font-medium">06.30-16.00</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="border-t border-white/20 mt-8 pt-4 text-center text-xs text-gray-400">
-            © 2026 Pelan-Pelan Tapi Pastry. All Rights Reserved.
-        </div>
-    </div>
-</footer>
 
 
-</html>
+<?php
+include 'footer.php';
+?>
