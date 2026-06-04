@@ -23,8 +23,35 @@
                     fontFamily: {
                         'petrona': ['Petrona', 'petrona'],
                         'sans': ['Poppins', 'sans-petrona'],
+                        'poppins': ['Poppins', 'sans-serif'],
                     }
                 }
             }
         }
     </script>
+
+        <script>
+        // Konfigurasi Tailwind untuk mendaftarkan Petrona dan Poppins
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'pastry-brown': {
+                            DEFAULT: '#8C5A3C', // Warna cokelat teks/judul
+                            dark: '#4B2F2B',    // Warna cokelat tua komponen teks kanan & tombol
+                        },
+                        'pastry-cream': '#FFF8F0',  // Warna krem latar belakang kartu sesuai gambar
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Memaksa bentuk gambar di tengah menyerupai kapsul/stadion oval sempurna */
+        .stadium-clip {
+            clip-path: ellipse(50% 50% at 50% 50%);
+        }
+    </style>
+
+</head>
