@@ -21,13 +21,25 @@ include 'header.php';
                 class="text-[#FFF8F0] border-b-2 border-[#FFF8F0] pb-1 transition-all duration-150">Beranda</a>
             <a href="catalog.php"
                 class="hover:text-[#FFF8F0] pb-1 transition-all duration-200 opacity-80 hover:opacity-100">Katalog</a>
-            <a href="manajemen.php"
-                class="hover:text-[#FFF8F0] pb-1 transition-all duration-200 opacity-80 hover:opacity-100">Manajemen</a>
+            <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+                <a href="admin/katalogmanajemen.php" 
+                    class="hover:text-[#FFF8F0] pb-1 transition-all duration-200 opacity-80 hover:opacity-100">Manajemen</a>
+            <?php endif; ?>
         </div>
 
-        <div onclick="openLoginModal()" class="w-9 h-9 rounded-full bg-[#FFF8F0] flex items-center justify-center cursor-pointer hover:opacity-90 transition-opacity">
-            <span class="text-base">👤</span>
+        <div class="flex items-center space-x-4">
+            <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+                <a href="admin/logout.php" 
+                    class="bg-[#4B2F2B] text-sm text-white px-3 py-1.5 rounded-xl font-medium flex items-center gap-2 hover:bg-[#392421] transition-all shadow-lg hover:shadow-xl active:scale-98 group">Logout</a>
+            <?php else: ?>
+                <div onclick="openLoginModal()" 
+                    class="w-9 h-9 rounded-full bg-[#FFF8F0] flex items-center justify-center cursor-pointer hover:opacity-90 transition-opacity">
+                    <span class="text-base">👤</span>
+                </div>
+            <?php endif; ?>
         </div>
+
+        
     </nav>
 
     <section class="max-w-7xl mx-auto px-6 py-12 md:py-20 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -71,7 +83,7 @@ include 'header.php';
             <div
                 class="bg-white/60 rounded-[32px] p-5 shadow-md border border-orange-50/50 flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1.5 hover:shadow-md">
                 <div class="w-full h-52 rounded-[24px] overflow-hidden mb-4">
-                    <img src="assets/product/matcha-cookies.jpg" alt="Matcha Cookies"
+                    <img src="assets/product/matcha-cookie.jpg" alt="Matcha Cookies"
                         class="w-full h-full object-cover">
                 </div>
                 <h3 class="font-petrona italic text-xl font-bold text-[#4B2F2B] mb-2">Matcha Cookies</h3>

@@ -20,7 +20,7 @@ $result = mysqli_query($conn, $query);
 
     <header>
     <nav
-        class="sticky top-0 z-50 bg-[#8C5A3C] shadow-md shadow-black/50 text-white px-6 py-3 flex items-center justify-between">
+        class="sticky top-0 z-50 bg-[#8C5A3C] shadow-md shadow-black/50 text-white px-6 py-3 flex items-center justify-between ">
         <div class="flex items-center space-x-3">
             <img src="assets/images/logo.png" alt="Croissant Logo" class="w-12 h-12 object-contain drop-shadow-md">
 
@@ -33,15 +33,27 @@ $result = mysqli_query($conn, $query);
         <div class="flex items-center  space-x-6 text-sm font-medium -ml-60">
             <a href="index.php"
                 class="hover:text-[#FFF8F0] pb-1 transition-all duration-200 opacity-80 hover:opacity-100">Beranda</a>
-                <a href="catalog.php"
-                class="text-[#FFF8F0] border-b-2 border-[#FFF8F0] pb-1 transition-all duration-150">Katalog</a>
-            <a href="manajemen.php"
-                class="hover:text-[#FFF8F0] pb-1 transition-all duration-200 opacity-80 hover:opacity-100">Manajemen</a>
+            <a href="catalog.php"
+                class="text-[#FFF8F0]  pb-1 transition-all duration-150 border-b-2">Katalog</a>
+            <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+                <a href="admin/katalogmanajemen.php" 
+                    class="hover:text-[#FFF8F0] pb-1 transition-all duration-200 opacity-80 hover:opacity-100">Manajemen</a>
+            <?php endif; ?>
         </div>
 
-        <div onclick="openLoginModal()" class="w-9 h-9 rounded-full bg-[#FFF8F0] flex items-center justify-center cursor-pointer hover:opacity-90 transition-opacity">
-            <span class="text-base">👤</span>
+        <div class="flex items-center space-x-4">
+            <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+                <a href="admin/logout.php" 
+                    class="bg-[#4B2F2B] text-sm text-white px-3 py-1.5 rounded-xl font-medium flex items-center gap-2 hover:bg-[#392421] transition-all shadow-lg hover:shadow-xl active:scale-98 group">Logout</a>
+            <?php else: ?>
+                <div onclick="openLoginModal()" 
+                    class="w-9 h-9 rounded-full bg-[#FFF8F0] flex items-center justify-center cursor-pointer hover:opacity-90 transition-opacity">
+                    <span class="text-base">👤</span>
+                </div>
+            <?php endif; ?>
         </div>
+
+        
     </nav>
     </header>
 
@@ -271,6 +283,7 @@ $result = mysqli_query($conn, $query);
     </div>
 </div>
 
+<!-- login modal -->
 <script>
     const loginModal = document.getElementById('loginModal');
     const passwordModal = document.getElementById('passwordModal');
@@ -312,6 +325,7 @@ $result = mysqli_query($conn, $query);
 
 <?php include 'product_card.php'; ?>
 
+<!-- Product Modal -->
 <script>
     const productModal = document.getElementById('productModal');
     const modalImg = document.getElementById('modalImg');
@@ -322,45 +336,46 @@ $result = mysqli_query($conn, $query);
     const modalStok = document.getElementById('modalStok');
 
     function openProductModal(button) {
-    // Tarik data atribut
-    const nama = button.getAttribute('data-nama');
-    const foto = button.getAttribute('data-foto');
-    const kategori = button.getAttribute('data-kategori');
-    const status = button.getAttribute('data-status');
-    const harga = button.getAttribute('data-harga');
-    const stok = button.getAttribute('data-stok');
+        const nama = button.getAttribute('data-nama');
+        const foto = button.getAttribute('data-foto');
+        const kategori = button.getAttribute('data-kategori');
+        const status = button.getAttribute('data-status');
+        const harga = button.getAttribute('data-harga');
+        const stok = button.getAttribute('data-stok');
 
-    // Suntik data ke modal
-    document.getElementById('modalNama').innerText = nama;
-    document.getElementById('modalImg').src = foto;
-    document.getElementById('modalImg').alt = nama;
-    document.getElementById('modalKategori').innerText = kategori;
-    document.getElementById('modalHarga').innerText = harga; // <--- Mengisi Harga
-    document.getElementById('modalStok').innerText = stok;   // <--- Mengisi Stok
-    document.getElementById('modalStatus').innerText = status;
+        document.getElementById('modalNama').innerText = nama;
+        document.getElementById('modalImg').src = foto;
+        document.getElementById('modalImg').alt = nama;
+        document.getElementById('modalKategori').innerText = kategori;
+        document.getElementById('modalHarga').innerText = harga;
+        document.getElementById('modalStok').innerText = stok;
+        document.getElementById('modalStatus').innerText = status;
 
-    // Atur warna teks status background melengkung bulat agar estetik sesuai desain card
-    if (status === 'Ready') {
-        document.getElementById('modalStatus').className = "text-[14px] font-poppins font-medium italic text-green-600 mb-2";
-    } else {
-        document.getElementById('modalStatus').className = "text-[14px] font-poppins font-medium italic text-amber-600 mb-3";
-    }
+        if (status === 'Ready') {
+            document.getElementById('modalStatus').className = "text-[14px] font-poppins font-medium italic text-green-600 mb-2";
+        } else {
+            document.getElementById('modalStatus').className = "text-[14px] font-poppins font-medium italic text-amber-600 mb-3";
+        }
 
-    // Tampilkan overlay modal
-    document.getElementById('productModal').classList.remove('hidden');
+        document.getElementById('productModal').classList.remove('hidden');
     }
 
     function closeProductModal() {
         document.getElementById('productModal').classList.add('hidden');
     }
 
-    // Tutup otomatis jika klik area blur luar card
+    // SATU LISTENER UNTUK SEMUA MODAL (Mencegah Crash Klik Luar)
     window.addEventListener('click', function(event) {
-        const modal = document.getElementById('productModal');
-        if (event.target == modal) {
+        const loginModal = document.getElementById('loginModal');
+        const productModal = document.getElementById('productModal');
+        
+        if (event.target === loginModal) {
+            closeLoginModal();
+        }
+        if (event.target === productModal) {
             closeProductModal();
         }
-});
+    });
 </script>
 
 

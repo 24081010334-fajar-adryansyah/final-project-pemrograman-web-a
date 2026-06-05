@@ -30,16 +30,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['role']     = 'admin';
 
             // Alihkan langsung masuk ke area admin
-            header("Location: admin/dashboard.php");
+            header("Location: admin/katalogmanajemen.php");
             exit;
         }
     }
 
     // Jika username salah atau password tidak cocok, tendang balik ke login.php
-    header("Location: login.php?pesan=gagal");
+    header("Location: index.php?pesan=gagal");
     exit;
 } else {
-    header("Location: login.php");
+    header("Location: index.php");
     exit;
 }
 ?>
